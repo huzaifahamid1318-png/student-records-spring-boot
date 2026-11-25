@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f4f6fb;
+            color: #0f172a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .profile-card {
+            width: 100%;
+            max-width: 500px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+        }
+        .banner {
+            background: radial-gradient(circle at top right, #312e81 0%, #1e1b4b 55%, #0f172a 100%);
+            padding: 32px 28px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .avatar-lg {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            flex-shrink: 0;
+        }
+        .banner h1 { font-size: 21px; font-weight: 800; letter-spacing: -0.01em; }
+        .banner p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #a5b4fc;
+            margin-top: 3px;
+        }
+        .body-content { padding: 26px 28px; }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .info-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 16px;
+        }
+        .info-box span {
+            display: block;
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        .info-box strong {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        .not-found-box {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .btn-row { display: flex; gap: 10px; }
+        .btn {
+            flex: 1;
+            padding: 11px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.18s;
+        }
+        .btn-edit { background: #4f46e5; color: white; }
+        .btn-edit:hover { background: #4338ca; }
+        .btn-back { background: #f1f5f9; color: #334155; }
+        .btn-back:hover { background: #e2e8f0; }
+    </style>
+</head>
+<body>
+
+    <div class="profile-card">
+        <div th:if="${student == null}" class="body-content">
+            <div class="not-found-box" th:text="'Student not found: ' + ${regNo}"></div>
+            <div class="btn-row">
+                <a href="/students" class="btn btn-back">&larr; Return to Directory</a>
+            </div>
+        </div>
+
+        <div th:if="${student != null}">
+            <div class="banner">
+                <div class="avatar-lg" th:text="${#strings.substring(student.name, 0, 1)}">S</div>
+                <div>
+                    <h1 th:text="${student.name}">Student Name</h1>
+                    <p th:text="${student.regNo}">REG-2026-001</p>
+                </div>
+            </div>
+
+            <div class="body-content">
+                <div class="info-grid">
+                    <div class="info-box">
+                        <span>Database ID</span>
+                        <strong class="mono" th:text="'#' + ${student.id}">#1</strong>
+                    </div>
+                    <div class="info-box">
+                        <span>Department</span>
+                        <strong th:text="${student.department}">CS</strong>
+                    </div>
+                    <div class="info-box" style="grid-column: span 2;">
+                        <span>Cumulative GPA</span>
+                        <strong class="mono" style="color: #4f46e5; font-size: 20px;"
+                                th:text="${#numbers.formatDecimal(student.cgpa, 1, 2)} + ' / 4.00'">3.50 / 4.00</strong>
+                    </div>
+                </div>
+
+                <div class="btn-row">
+                    <a th:href="@{/students/{regNo}/edit(regNo=${student.regNo})}" class="btn btn-edit">Edit Profile</a>
+                    <a href="/students" class="btn btn-back">&larr; Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

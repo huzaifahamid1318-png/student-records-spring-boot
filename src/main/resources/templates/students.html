@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Records — Academic Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #f4f6fb;
+            --bg-surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-subtle: #e2e8f0;
+            --accent: #4f46e5;
+            --accent-hover: #4338ca;
+            --accent-soft: #eef2ff;
+            --emerald: #10b981;
+            --emerald-soft: #ecfdf5;
+            --amber: #f59e0b;
+            --amber-soft: #fffbeb;
+            --rose: #ef4444;
+            --rose-soft: #fef2f2;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Hero Top Banner */
+        .hero-header {
+            background: radial-gradient(circle at top right, #312e81 0%, #1e1b4b 45%, #0f172a 100%);
+            color: white;
+            padding: 32px 0 68px;
+            position: relative;
+            z-index: 1;
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #c7d2fe;
+            margin-bottom: 10px;
+            backdrop-filter: blur(6px);
+        }
+        .dot-live {
+            width: 7px;
+            height: 7px;
+            background-color: #34d399;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #34d399;
+        }
+        .hero-header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+        }
+        .hero-header p {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* Overlapping Stat Cards */
+        .main-wrapper {
+            margin-top: -36px;
+            padding-bottom: 60px;
+            position: relative;
+            z-index: 2;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 20px 22px;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 4px 10px -6px rgba(15, 23, 42, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .icon-indigo { background: var(--accent-soft); color: var(--accent); }
+        .icon-emerald { background: var(--emerald-soft); color: var(--emerald); }
+        .icon-amber { background: var(--amber-soft); color: var(--amber); }
+
+        .stat-info span {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+        }
+        .stat-info h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-top: 2px;
+        }
+
+        /* Main Directory Card */
+        .directory-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05);
+            overflow: hidden;
+        }
+        .toolbar {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            background: #ffffff;
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-wrapper svg {
+            position: absolute;
+            left: 13px;
+            color: #94a3b8;
+            pointer-events: none;
+        }
+        input[type="text"] {
+            font-family: inherit;
+            padding: 10px 14px 10px 38px;
+            width: 280px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--text-main);
+            background: #f8fafc;
+            transition: all 0.2s ease;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            background: #ffffff;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+        }
+
+        /* Buttons */
+        .btn {
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-hero {
+            background: #ffffff;
+            color: #1e1b4b;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+        }
+        .btn-hero:hover { background: #eef2ff; transform: translateY(-1px); }
+
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: var(--accent-hover); }
+
+        .btn-ghost {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        .btn-ghost:hover { background: #e2e8f0; color: #0f172a; }
+
+        .btn-action {
+            padding: 6px 12px;
+            font-size: 12.5px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .btn-view { background: #f8fafc; color: #334155; border: 1px solid #e2e8f0; }
+        .btn-view:hover { background: #eef2ff; color: var(--accent); border-color: #c7d2fe; }
+
+        .btn-edit { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+        .btn-edit:hover { background: #fef3c7; }
+
+        .btn-delete { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+        .btn-delete:hover { background: #fee2e2; }
+
+        /* Table */
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            background: #f8fafc;
+            color: var(--text-muted);
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 14px 24px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+        tbody tr { transition: background-color 0.15s ease; }
+        tbody tr:hover { background-color: #f8fafc; }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .reg-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            background: var(--accent-soft);
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        .reg-code:hover { background: var(--accent); color: white; }
+
+        .student-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+        .student-name { font-weight: 600; color: var(--text-main); }
+
+        .dept-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 11px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+        }
+
+        .cgpa-badge {
+            font-family: 'JetBrains Mono', monospace;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 11px;
+            border-radius: 999px;
+            font-size: 12.5px;
+            font-weight: 600;
+        }
+        .cgpa-dot { width: 6px; height: 6px; border-radius: 50%; }
+        .cgpa-high { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+        .cgpa-high .cgpa-dot { background: #10b981; }
+        .cgpa-mid { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+        .cgpa-mid .cgpa-dot { background: #f59e0b; }
+        .cgpa-low { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+        .cgpa-low .cgpa-dot { background: #ef4444; }
+
+        .actions-cell { display: flex; gap: 6px; }
+
+        .empty-state {
+            padding: 60px 24px;
+            text-align: center;
+        }
+        .empty-icon {
+            width: 56px;
+            height: 56px;
+            background: #f1f5f9;
+            color: #94a3b8;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+        .empty-state h3 { font-size: 17px; color: var(--text-main); }
+        .empty-state p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+    <header class="hero-header">
+        <div class="container header-row">
+            <div>
+                <div class="brand-badge">
+                    <span class="dot-live"></span>
+                    <span>MySQL Persistent Storage</span>
+                </div>
+                <h1>Student Records Directory</h1>
+                <p>Manage enrollments, academic departments, and CGPA standings in real time.</p>
+            </div>
+            <a href="/students/new" class="btn btn-hero">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Add New Student
+            </a>
+        </div>
+    </header>
+
+    <main class="container main-wrapper">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon icon-indigo">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </div>
+                <div class="stat-info">
+                    <span>Total Listed</span>
+                    <h2 th:text="${#lists.size(students)} + ' Students'">0 Students</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon icon-emerald">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                </div>
+                <div class="stat-info">
+                    <span>Database Engine</span>
+                    <h2>scd_records</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon icon-amber">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                </div>
+                <div class="stat-info">
+                    <span>Architecture</span>
+                    <h2>Spring JDBC</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="directory-card">
+            <div class="toolbar">
+                <form action="/students" method="get" class="search-box">
+                    <div class="input-wrapper">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" name="name" th:value="${searchName}" placeholder="Filter by student name...">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a href="/students" class="btn btn-ghost">Reset</a>
+                </form>
+            </div>
+
+            <div th:if="${#lists.isEmpty(students)}" class="empty-state">
+                <div class="empty-icon">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </div>
+                <h3>No matching student records</h3>
+                <p>Clear your search query or register a new student to get started.</p>
+            </div>
+
+            <div th:if="${!#lists.isEmpty(students)}" class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Registration No</th>
+                            <th>Student Name</th>
+                            <th>Department</th>
+                            <th>CGPA</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="s : ${students}">
+                            <td>
+                                <a class="reg-code" th:href="@{/students/{regNo}(regNo=${s.regNo})}" th:text="${s.regNo}"></a>
+                            </td>
+                            <td>
+                                <div class="student-cell">
+                                    <div class="avatar" th:text="${#strings.substring(s.name, 0, 1)}">A</div>
+                                    <span class="student-name" th:text="${s.name}"></span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="dept-tag" th:text="${s.department}"></span>
+                            </td>
+                            <td>
+                                <span class="cgpa-badge"
+                                      th:classappend="${s.cgpa >= 3.5} ? 'cgpa-high' : (${s.cgpa >= 2.8} ? 'cgpa-mid' : 'cgpa-low')">
+                                    <span class="cgpa-dot"></span>
+                                    <span th:text="${#numbers.formatDecimal(s.cgpa, 1, 2)}"></span>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="actions-cell">
+                                    <a th:href="@{/students/{regNo}(regNo=${s.regNo})}" class="btn btn-action btn-view">View</a>
+                                    <a th:href="@{/students/{regNo}/edit(regNo=${s.regNo})}" class="btn btn-action btn-edit">Edit</a>
+                                    <form th:action="@{/students/{regNo}/delete(regNo=${s.regNo})}" method="post" style="display:inline;"
+                                          onsubmit="return confirm('Permanently delete this student record from MySQL?');">
+                                        <button type="submit" class="btn btn-action btn-delete">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
